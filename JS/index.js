@@ -91,101 +91,7 @@ function updateClock() {
     document.getElementById('digital-clock').textContent = `${hStr}:${mStr}:${sStr}`;
 }
 
-// 실시간 급식 데이터 파싱 및 강제 출력 갱신 함수
-function initClockElements() {
-    const clockFace = document.getElementById('clock-face');
-    const radius = 50;
-
-    for (let i = 0; i < 60; i++) {
-        const mark = document.createElement('div');
-        mark.classList.add('clock-mark');
-        if (i % 5 === 0) mark.classList.add('major');
-        mark.style.transform = `translateX(-50%) rotate(${i * 6}deg) translateY(-${radius - 8}px)`;
-        clockFace.appendChild(mark);
-    }
-
-    for (let num = 1; num <= 12; num++) {
-        const numberEl = document.createElement('div');
-        numberEl.classList.add('clock-number');
-        numberEl.textContent = num;
-        const angle = (num * 30 - 90) * (Math.PI / 180);
-        const x = radius + 36 * Math.cos(angle) - 7;
-        const y = radius + 36 * Math.sin(angle) - 7;
-        numberEl.style.left = `${x}px`;
-        numberEl.style.top = `${y}px`;
-        clockFace.appendChild(numberEl);
-    }
-}
-
-function adjustRowHeights() {
-    const rows = document.querySelectorAll('.timetable-row');
-    rows.forEach(row => {
-        const start = parseInt(row.getAttribute('data-start'));
-        const end = parseInt(row.getAttribute('data-end'));
-        const duration = end - start;
-        
-        const tds = row.querySelectorAll('td');
-        tds.forEach(td => {
-            td.style.height = `${duration * 1.2}px`;
-        });
-    });
-}
-
-function updateTimeLine() {
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    
-    const timeLine = document.getElementById('time-line');
-    const container = document.getElementById('timetable-container');
-    const rows = document.querySelectorAll('.timetable-row');
-    
-    let isWithinSchoolTime = false;
-
-    for (let row of rows) {
-        const start = parseInt(row.getAttribute('data-start'));
-        const end = parseInt(row.getAttribute('data-end'));
-        
-        if (currentMinutes >= start && currentMinutes <= end) {
-            isWithinSchoolTime = true;
-            
-            const rowTop = row.offsetTop;
-            const rowHeight = row.offsetHeight;
-            const percentage = (currentMinutes - start) / (end - start);
-            
-            const lineY = rowTop + (rowHeight * percentage);
-            timeLine.style.top = `${lineY}px`;
-            timeLine.classList.remove('hidden');
-            break;
-        }
-    }
-    
-    if (!isWithinSchoolTime) {
-        timeLine.classList.add('hidden');
-    }
-}
-
-function updateClock() {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-
-    const hourDeg = (hours % 12) * 30 + minutes * 0.5;
-    const minuteDeg = minutes * 6 + seconds * 0.1;
-    const secondDeg = seconds * 6;
-
-    document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
-    document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
-    document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
-
-    const hStr = String(hours).padStart(2, '0');
-    const mStr = String(minutes).padStart(2, '0');
-    const sStr = String(seconds).padStart(2, '0');
-
-    document.getElementById('digital-clock').textContent = `${hStr}:${mStr}:${sStr}`;
-}
-
-// 실시간 급식 데이터 호출 함수 (새 인증키 완벽 세팅)
+// 실시간 급식 데이터 호출 함수
 async function fetchSchoolMeal() {
     const now = new Date();
     const year = now.getFullYear();
@@ -196,10 +102,7 @@ async function fetchSchoolMeal() {
     const dateEl = document.getElementById('meal-date');
     if (dateEl) dateEl.textContent = `${year}-${month}-${date}`;
 
-    // 🌟 요청하신 새로운 인증키를 완벽하게 적용했습니다.
     const AUTH_KEY = "9b092ae280784b31b42b54c764436302"; 
-    
-    // 외부 웹 배포 환경(GitHub Pages)에서도 보안 오류 없이 호출 가능한 공식 경로 규격입니다.
     const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${AUTH_KEY}&Type=json&ATPT_OFCDC_SC_CODE=T10&SD_SCHUL_CODE=9290083&MLSV_YMD=${ymd}`;
 
     try {
@@ -251,6 +154,7 @@ async function fetchSchoolMeal() {
     }
 }
 
+// 초기 로드 이벤트 처리기 (꼬여있던 종결 구문 교정 완료)
 document.addEventListener('DOMContentLoaded', () => {
     initClockElements();
     adjustRowHeights();
@@ -258,14 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateClock();
     updateTimeLine();
     
-    // 외부 서버 지연 현상을 차단하기 위해 약간의 딜레이 후 급식 데이터 수신 개시
     setTimeout(fetchSchoolMeal, 50);
     
     setInterval(() => {
         updateClock();
-        updateTimeLine();
-    }, 1000);
-});
         updateTimeLine();
     }, 1000);
 });
