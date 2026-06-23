@@ -1,5 +1,6 @@
+/* 요청하신 MacOS10.jpg 입체 다크 이미지를 전체 배경으로 세팅 */
 body {
-    background-image: url('./MacOS10.jpg?v=1');
+    background-image: url('../MacOS10.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -7,18 +8,21 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* 스크린샷 텍스트처럼 어두운 배경 위에서 은은하게 빛나는 효과 */
 .text-shadow-glow {
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
 }
 
+/* 입체 배경이 투명하게 비치도록 불러 처리를 강화한 흑백 테이블 */
 .custom-table-container {
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
+/* 정갈한 투명 테두리 알약 캡슐 */
 .mono-caps {
     display: flex;
     align-items: center;
@@ -38,14 +42,16 @@ body {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* 빈 공간 하이픈(-) 글자 색상 */
 .text-neutral-600 {
-    color: rgba(255, 255, 255, 0.2);
+    color: #44474f;
 }
 
 .table-row-hover:hover {
     background-color: rgba(255, 255, 255, 0.015);
 }
 
+/* 스크롤바 미니멀 커스텀 */
 ::-webkit-scrollbar {
     width: 4px;
     height: 4px;
@@ -58,6 +64,7 @@ body {
     border-radius: 2px;
 }
 
+/* 대형 아날로그 시계 스타일 */
 .analog-clock {
     position: relative;
     width: 100px;
