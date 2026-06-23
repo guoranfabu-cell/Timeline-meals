@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘의 급식</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="CSS/index.css" />
+  </head>
+  <body
+    class="text-gray-200 min-h-screen flex flex-col justify-center p-4 md:p-8"
+  >
+    <header
+      class="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 border-b border-white/10 pb-4"
+    >
+      <h1 class="text-xl font-bold text-white text-shadow-glow">
+        오늘의 미림 급식
+      </h1>
+      <nav class="flex gap-4">
+        <a
+          href="index.html"
+          class="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-gray-300 hover:text-white transition-all"
+          >📅 시간표 복귀</a
+        >
+      </nav>
+    </header>
+
+    <main class="w-full max-w-4xl mx-auto">
+      <section
+        class="custom-table-container rounded-2xl p-8 border border-white/10 shadow-2xl"
+      >
+        <h2 class="text-lg font-bold text-white mb-6" id="meal-date">
+          불러오는 중...
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-black/20 p-6 rounded-xl border border-white/5">
+            <h3 class="text-xs text-gray-400 mb-2 font-bold">조식</h3>
+            <p id="meal-breakfast" class="text-sm whitespace-pre-line">
+              불러오는 중...
+            </p>
+          </div>
+          <div class="bg-black/20 p-6 rounded-xl border border-white/5">
+            <h3 class="text-xs text-gray-400 mb-2 font-bold">중식</h3>
+            <p id="meal-lunch" class="text-sm whitespace-pre-line">
+              불러오는 중...
+            </p>
+          </div>
+          <div class="bg-black/20 p-6 rounded-xl border border-white/5">
+            <h3 class="text-xs text-gray-400 mb-2 font-bold">석식</h3>
+            <p id="meal-dinner" class="text-sm whitespace-pre-line">
+              불러오는 중...
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="JS/index.js"></script>
+  </body>
+</html>
