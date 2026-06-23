@@ -103,7 +103,7 @@ async function fetchSchoolMeal() {
     if (dateEl) dateEl.textContent = `${year}-${month}-${date}`;
 
     const AUTH_KEY = "9b092ae280784b31b42b54c764436302"; 
-    const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${AUTH_KEY}&Type=json&ATPT_OFCDC_SC_CODE=T10&SD_SCHUL_CODE=9290083&MLSV_YMD=${ymd}`;
+    const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${AUTH_KEY}&Type=json&ATPT_OFCDC_SC_CODE=B10&SD_SCHUL_CODE=7011569&MLSV_YMD=${ymd}`;
 
     try {
         const response = await fetch(url);
