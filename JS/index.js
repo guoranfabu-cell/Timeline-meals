@@ -1,5 +1,7 @@
 function initClockElements() {
     const clockFace = document.getElementById('clock-face');
+    if (!clockFace) return; // 요소가 없으면 실행 안함 (급식 페이지 예외 처리)
+    
     const radius = 50;
 
     for (let i = 0; i < 60; i++) {
@@ -25,6 +27,8 @@ function initClockElements() {
 
 function adjustRowHeights() {
     const rows = document.querySelectorAll('.timetable-row');
+    if (rows.length === 0) return;
+
     rows.forEach(row => {
         const start = parseInt(row.getAttribute('data-start'));
         const end = parseInt(row.getAttribute('data-end'));
@@ -38,13 +42,13 @@ function adjustRowHeights() {
 }
 
 function updateTimeLine() {
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    
     const timeLine = document.getElementById('time-line');
     const container = document.getElementById('timetable-container');
     const rows = document.querySelectorAll('.timetable-row');
-    
+    if (!timeLine || rows.length === 0) return;
+
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
     let isWithinSchoolTime = false;
 
     for (let row of rows) {
@@ -71,36 +75,54 @@ function updateTimeLine() {
 }
 
 function updateClock() {
+    const hourHand = document.getElementById('hour-hand');
+    const minuteHand = document.getElementById('minute-hand');
+    const secondHand = document.getElementById('second-hand');
+    const digitalClock = document.getElementById('digital-clock');
+
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
 
-    const hourDeg = (hours % 12) * 30 + minutes * 0.5;
-    const minuteDeg = minutes * 6 + seconds * 0.1;
-    const secondDeg = seconds * 6;
+    if (hourHand && minuteHand && secondHand) {
+        const hourDeg = (hours % 12) * 30 + minutes * 0.5;
+        const minuteDeg = minutes * 6 + seconds * 0.1;
+        const secondDeg = seconds * 6;
 
-    document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
-    document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
-    document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+        hourHand.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+        minuteHand.style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
+        secondHand.style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+    }
 
-    const hStr = String(hours).padStart(2, '0');
-    const mStr = String(minutes).padStart(2, '0');
-    const sStr = String(seconds).padStart(2, '0');
-
-    document.getElementById('digital-clock').textContent = `${hStr}:${mStr}:${sStr}`;
+    if (digitalClock) {
+        const hStr = String(hours).padStart(2, '0');
+        const mStr = String(minutes).padStart(2, '0');
+        const sStr = String(seconds).padStart(2, '0');
+        digitalClock.textContent = `${hStr}:${mStr}:${sStr}`;
+    }
 }
 
 // 실시간 급식 데이터 호출 함수
 async function fetchSchoolMeal() {
+    const dateEl = document.getElementById('meal-date');
+    const breakfastEl = document.getElementById('meal-breakfast');
+    const lunchEl = document.getElementById('meal-lunch');
+    const dinnerEl = document.getElementById('meal-dinner');
+
+    // 급식 관련 태그가 전혀 없는 페이지(시간표 페이지)라면 API 요청 자체를 안 함
+    if (!dateEl && !breakfastEl && !lunchEl && !dinnerEl) return;
+
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const date = String(now.getDate()).padStart(2, '0');
     const ymd = `${year}${month}${date}`;
 
-    const dateEl = document.getElementById('meal-date');
     if (dateEl) dateEl.textContent = `${year}-${month}-${date}`;
+    if (breakfastEl) breakfastEl.textContent = "급식 없음";
+    if (lunchEl) lunchEl.textContent = "급식 없음";
+    if (dinnerEl) dinnerEl.textContent = "급식 없음";
 
     const AUTH_KEY = "9b092ae280784b31b42b54c764436302"; 
     const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${AUTH_KEY}&Type=json&ATPT_OFCDC_SC_CODE=B10&SD_SCHUL_CODE=7011569&MLSV_YMD=${ymd}`;
@@ -109,20 +131,13 @@ async function fetchSchoolMeal() {
         const response = await fetch(url);
         const data = await response.json();
 
-        const breakfastEl = document.getElementById('meal-breakfast');
-        const lunchEl = document.getElementById('meal-lunch');
-        const dinnerEl = document.getElementById('meal-dinner');
-
-        if (breakfastEl) breakfastEl.textContent = "급식 없음";
-        if (lunchEl) lunchEl.textContent = "급식 없음";
-        if (dinnerEl) dinnerEl.textContent = "급식 없음";
-
         if (data.mealServiceDietInfo) {
             const mealRows = data.mealServiceDietInfo[1].row;
             
             mealRows.forEach(item => {
+                // <br/> 태그는 공백 문자로 바꾼 뒤 텍스트로 삽입
                 const cleanMeal = item.DDISH_NM
-                    .replace(/<br\/>/g, '\n')
+                    .replace(/<br\s*\/?>/gi, '\n') 
                     .replace(/\([0-9.]+\)/g, '')
                     .trim();
                 
@@ -148,13 +163,13 @@ async function fetchSchoolMeal() {
     } catch (error) {
         console.error("급식 데이터 가공 실패:", error);
         const errorMsg = "데이터를 불러올 수 없습니다.";
-        if (document.getElementById('meal-breakfast')) document.getElementById('meal-breakfast').textContent = errorMsg;
-        if (document.getElementById('meal-lunch')) document.getElementById('meal-lunch').textContent = errorMsg;
-        if (document.getElementById('meal-dinner')) document.getElementById('meal-dinner').textContent = errorMsg;
+        if (breakfastEl) breakfastEl.textContent = errorMsg;
+        if (lunchEl) lunchEl.textContent = errorMsg;
+        if (dinnerEl) dinnerEl.textContent = errorMsg;
     }
 }
 
-// 초기 로드 이벤트 처리기 (꼬여있던 종결 구문 교정 완료)
+// 초기 로드 이벤트 처리기
 document.addEventListener('DOMContentLoaded', () => {
     initClockElements();
     adjustRowHeights();
