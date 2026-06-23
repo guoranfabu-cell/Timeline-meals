@@ -1,6 +1,6 @@
 /* 요청하신 MacOS10.jpg 입체 다크 이미지를 전체 배경으로 세팅 */
 body {
-    background-image: url('../MacOS10.jpg');
+    background-image: url('./MacOS10.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
